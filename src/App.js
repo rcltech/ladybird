@@ -1,23 +1,35 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import GoogleLogin from "react-google-login";
+
+function onSignIn(googleUser){
+  readFromLocalStorage()
+}
+
+function readFromLocalStorage() {
+  const auth2 = window.gapi.auth2.getAuthInstance();
+  const profile = auth2.currentUser.get().getBasicProfile();
+  console.log('ID: ' + profile.getId());
+  console.log('Full Name: ' + profile.getName());
+  console.log('Given Name: ' + profile.getGivenName());
+  console.log('Family Name: ' + profile.getFamilyName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail());
+}
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <GoogleLogin
+            onSuccess={onSignIn}
+            isSignedIn={() => {readFromLocalStorage()}}
+            onFailure={() => {console.log("error")}}
+            clientId={"798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com"}
+            cookiePolicy={'single_host_origin'}
+            uxMode={"redirect"}
+            redirectUri={"https://www.rctech.club/sls"}
+        />
       </header>
     </div>
   );
