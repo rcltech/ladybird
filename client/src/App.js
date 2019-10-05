@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import GoogleLogin from "react-google-login";
 
 function onSignIn(googleUser){
