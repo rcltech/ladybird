@@ -1,8 +1,12 @@
 import React from 'react';
-import GoogleLogin from "react-google-login";
+import GoogleLogin from 'react-google-login';
+import { Container } from '@material-ui/core';
+import './App.css';
 
-function onSignIn(googleUser){
-  readFromLocalStorage()
+import logo from './images/logo.png';
+
+function onSignIn(googleUser) {
+  readFromLocalStorage();
 }
 
 function readFromLocalStorage() {
@@ -19,16 +23,39 @@ function readFromLocalStorage() {
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+      <Container className="App-header">
+        <div>
+          <a
+            href="http://rctech.club"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img className="logo" src={logo} alt="RCTECH" />
+          </a>
+        </div>
+        <div className="header-text">Ladybird</div>
+      </Container>
+      <Container className="App-body">
+        <div className="body-text">
+          <h3>Welcome RC Lee Hallmate!</h3>
+          <h4>To continue using our app, please login.</h4>
+        </div>
         <GoogleLogin
-            onSuccess={onSignIn}
-            isSignedIn={() => {readFromLocalStorage()}}
-            onFailure={() => {console.log("error")}}
-            clientId={"798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com"}
-            cookiePolicy={'single_host_origin'}
-            uxMode={"redirect"}
+          onSuccess={onSignIn}
+          isSignedIn={() => {
+            readFromLocalStorage();
+          }}
+          onFailure={() => {
+            console.log('error');
+          }}
+          clientId={
+            '798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com'
+          }
+          cookiePolicy={'single_host_origin'}
+          uxMode={'redirect'}
+          redirectUri={'https://www.rctech.club/sls'}
         />
-      </header>
+      </Container>
     </div>
   );
 }
