@@ -22,19 +22,3 @@
 .header-text {
   font-weight: 900;
 }
-
-.body-text {
-  margin-bottom: 2vh;
-}
-
-.App-body {
-  margin: 3vh auto;
-}
-
-.container {
-  margin: 1vh auto;
-  max-width: 350px;
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
