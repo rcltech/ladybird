@@ -28,7 +28,6 @@ function App() {
             clientId={"798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com"}
             cookiePolicy={'single_host_origin'}
             uxMode={"redirect"}
-            redirectUri={"https://www.rctech.club/sls"}
         />
       </header>
     </div>
