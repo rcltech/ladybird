@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js",
-    "start": "node app.js",
+    "dev": "npm run build:react && nodemon app.js",
+    "build:react": "npm run build --prefix ./client",
+    "start": "npm run build:react && node dist/app.js",
     "test": "jest"
   },
   "repository": {
