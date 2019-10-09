@@ -1,37 +1,28 @@
 {
   "name": "ladybird",
-  "version": "0.1.0",
-  "private": true,
-  "homepage": "https://rcltech.github.io/ladybird/",
-  "dependencies": {
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-google-login": "^5.0.5",
-    "react-scripts": "3.1.2"
-  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "npm run build && gh-pages -d build"
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "test": "jest"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rcltech/ladybird.git"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rcltech/ladybird/issues"
   },
+  "homepage": "https://github.com/rcltech/ladybird#readme",
   "devDependencies": {
-    "gh-pages": "^2.1.1"
+    "jest": "^24.9.0",
+    "nodemon": "^1.19.3"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
