@@ -47,7 +47,6 @@ const Login = () => {
         }
         cookiePolicy={'single_host_origin'}
         uxMode={'redirect'}
-        // redirectUri={''}
       />
     </Container>
   );

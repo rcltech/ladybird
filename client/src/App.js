@@ -2,8 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container } from '@material-ui/core';
 import './App.css';
-
-import logo from './images/logo.png';
+import logo from "./images/logo.png";
 
 import Login from './components/Login';
 import Register from './components/Register';
@@ -15,8 +14,7 @@ function App() {
         <Container className="App-header">
           <div>
             <a
-              href="http://rctech.club"
-              target="_blank"
+              href="https://www.rctech.club"
               rel="noopener noreferrer"
             >
               <img className="logo" src={logo} alt="RCTECH" />
