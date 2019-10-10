@@ -10,6 +10,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { UserContext } from "../UserContext";
+import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({
   container: {
@@ -91,10 +92,9 @@ const Register = props => {
               </Button>
             </FormGroup>
           </Container>
-        ): null
+        ): <Redirect to={"/"}/>
       )}
     </UserContext.Consumer>
-
   );
 };
 
