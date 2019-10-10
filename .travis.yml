@@ -4,6 +4,8 @@ node_js:
 
 cache:
   yarn: true
+  directories:
+    - "client/build"
 
 install:
   - yarn install
@@ -13,3 +15,8 @@ jobs:
     - stage: test
       script:
         - npm run test
+    - stage: react
+      before_install:
+        - cd client
+      script:
+        - npm run build
