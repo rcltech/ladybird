@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run build:react && nodemon bin/www.js",
+    "dev:react": "npm run start:react --prefix ./client",
     "build:react": "npm run build --prefix ./client",
     "start": "npm run build:react && node bin/www.js",
     "test": "jest"

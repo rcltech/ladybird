@@ -1,41 +1,42 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Container } from '@material-ui/core';
-import './App.css';
-import logo from "./images/logo.png";
+import React from "react";
+import { Route, Switch } from "react-router-dom";
+import "./App.css";
 
-import Login from './components/Login';
-import Register from './components/Register';
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Header from "./components/Header";
+import { UserContext } from "./UserContext";
 
-function App() {
-  return (
-    <Router>
+class App extends React.Component {
+  state = {
+    isGoogleLogin: false,
+  };
+
+  render() {
+    console.log(this.state.isGoogleLogin);
+    return (
       <div className="App">
-        <Container className="App-header">
-          <div>
-            <a
-              href="https://www.rctech.club"
-              rel="noopener noreferrer"
-            >
-              <img className="logo" src={logo} alt="RCTECH" />
-            </a>
-          </div>
-          <div className="header-text">Ladybird</div>
-        </Container>
-
+        <Header />
         <div>
           <Switch>
-            <Route path="/register">
-              <Register />
-            </Route>
-            <Route path="/">
-              <Login />
-            </Route>
+            <UserContext.Provider
+              value={{
+                user: this.state.isGoogleLogin,
+                toggleUser: () => {
+                  this.setState({
+                    isGoogleLogin: true,
+                  });
+                },
+              }}
+            >
+              <Route path="/" exact component={Login} />
+              <Route path="/register" exact component={Register} />
+            </UserContext.Provider>
           </Switch>
         </div>
       </div>
-    </Router>
-  );
+    );
+  }
 }
 
 export default App;
