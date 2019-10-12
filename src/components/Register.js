@@ -1,34 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
+
 import {
-  Container,
-  FormGroup,
-  FormControl,
-  InputLabel,
-  Input,
-  FormHelperText,
   Button,
-  makeStyles
-} from '@material-ui/core';
+  Container,
+  FormControl,
+  FormGroup,
+  FormHelperText,
+  Input,
+  InputLabel,
+  makeStyles,
+} from "@material-ui/core";
+import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({
   container: {
-    margin: '3vh auto'
+    margin: "3vh auto",
   },
   disclaimer: {
-    margin: '1vmax'
+    margin: "1vmax",
   },
   form: {
-    margin: '2vh auto'
-  }
+    margin: "2vh auto",
+  },
 });
 
-const Register = props => {
+const Register = ({ location, history }) => {
   const classes = useStyles();
-  // const { user } = props;
-
   const [form, setForm] = useState({
     room: null,
-    year: null
+    year: null,
   });
 
   const handleChange = e => {
@@ -36,14 +37,52 @@ const Register = props => {
     setForm(form);
   };
 
-  const handleSubmit = () => {
-    // TODO: send post request to server
-    alert(`submitted: ${form}`);
+  const handleSubmit = async () => {
+    let HOST_URL = "";
+    if (window.location.host.includes("localhost"))
+      HOST_URL = "http://localhost:4000/graphql";
+    else HOST_URL = "https://phoenix.rctech.club/graphql";
+    const response = await axios.post(
+      HOST_URL,
+      {
+        query: `
+      mutation{
+        register(
+          user: {
+            username: "${form.username}"
+            phone: "${form.phone}"
+            room_no: "${form.room}"
+          }
+        ){
+          username
+        }
+      }
+      `,
+      },
+      {
+        headers: {
+          authorization: location.state.token,
+        },
+      }
+    );
+    if (response.data.data.register === null) {
+      history.replace({ location: "/" });
+    } else {
+      window.location.replace(
+        `https://${sessionStorage.getItem("redirectTo")}?id=${
+          location.state.token
+        }`
+      );
+    }
   };
+
+  if (location.state === undefined) return <Redirect to="/" />;
+  const token = location.state.token;
+  const user = location.state.user;
 
   return (
     <Container className={classes.container}>
-      <h3>Hello, new user!</h3>
+      <h3>{`Hello, ${user.first_name}`}</h3>
       <div className={classes.disclaimer}>
         To continue using our services, we require you to sign in with Google,
         in which you have successfully completed that step. While we implicitly
@@ -62,7 +101,9 @@ const Register = props => {
             aria-describedby="username-helper-text"
             onChange={handleChange}
           />
-          <FormHelperText id="username-helper-text">iamawesome</FormHelperText>
+          <FormHelperText id="username-helper-text">
+            For example: iamawesome
+          </FormHelperText>
         </FormControl>
         <FormControl required>
           <InputLabel htmlFor="phone">Phone (Hong Kong)</InputLabel>
@@ -71,7 +112,9 @@ const Register = props => {
             aria-describedby="phone-helper-text"
             onChange={handleChange}
           />
-          <FormHelperText id="phone-helper-text">+85212345678</FormHelperText>
+          <FormHelperText id="phone-helper-text">
+            For example: +85212345678
+          </FormHelperText>
         </FormControl>
         <FormControl required>
           <InputLabel htmlFor="room">Room number</InputLabel>
@@ -80,7 +123,9 @@ const Register = props => {
             aria-describedby="room-helper-text"
             onChange={handleChange}
           />
-          <FormHelperText id="room-helper-text">1010A</FormHelperText>
+          <FormHelperText id="room-helper-text">
+            For example: 924A
+          </FormHelperText>
         </FormControl>
         <Button type="submit" onClick={handleSubmit}>
           Submit
