@@ -30,7 +30,11 @@ function readFromLocalStorage() {
 
 const onLoginSuccess = async (location, history, googleUser) => {
   const user = readFromLocalStorage();
-  const response = await axios.post("http://localhost:4000/graphql", {
+  let HOST_URL = "";
+  if (window.location.host.includes("localhost"))
+    HOST_URL = "http://localhost:4000/graphql";
+  else HOST_URL = "https://phoenix.rctech.club/graphql";
+  const response = await axios.post(HOST_URL, {
     query: `
     mutation {
       login{

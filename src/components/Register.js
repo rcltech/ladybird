@@ -15,21 +15,21 @@ import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({
   container: {
-    margin: '3vh auto'
+    margin: "3vh auto",
   },
   disclaimer: {
-    margin: '1vmax'
+    margin: "1vmax",
   },
   form: {
-    margin: '2vh auto'
-  }
+    margin: "2vh auto",
+  },
 });
 
-const Register = ({location, history}) => {
+const Register = ({ location, history }) => {
   const classes = useStyles();
   const [form, setForm] = useState({
     room: null,
-    year: null
+    year: null,
   });
 
   const handleChange = e => {
@@ -38,8 +38,14 @@ const Register = ({location, history}) => {
   };
 
   const handleSubmit = async () => {
-    const response = await axios.post("http://localhost:4000/graphql", {
-      query: `
+    let HOST_URL = "";
+    if (window.location.host.includes("localhost"))
+      HOST_URL = "http://localhost:4000/graphql";
+    else HOST_URL = "https://phoenix.rctech.club/graphql";
+    const response = await axios.post(
+      HOST_URL,
+      {
+        query: `
       mutation{
         register(
           user: {
@@ -51,22 +57,27 @@ const Register = ({location, history}) => {
           username
         }
       }
-      `
-    }, {
-      headers: {
-        'authorization': location.state.token
+      `,
+      },
+      {
+        headers: {
+          authorization: location.state.token,
+        },
       }
-    });
-    if(response.data.data.register === null) {
-      history.replace({location: "/"})
-    }
-    else {
-      window.location.replace(`https://${sessionStorage.getItem("redirectTo")}?id=${location.state.token}`)
+    );
+    if (response.data.data.register === null) {
+      history.replace({ location: "/" });
+    } else {
+      window.location.replace(
+        `https://${sessionStorage.getItem("redirectTo")}?id=${
+          location.state.token
+        }`
+      );
     }
   };
 
-  if(location.state === undefined) return <Redirect to="/"/>;
-  const token =  location.state.token;
+  if (location.state === undefined) return <Redirect to="/" />;
+  const token = location.state.token;
   const user = location.state.user;
 
   return (
@@ -90,7 +101,9 @@ const Register = ({location, history}) => {
             aria-describedby="username-helper-text"
             onChange={handleChange}
           />
-          <FormHelperText id="username-helper-text">For example: iamawesome</FormHelperText>
+          <FormHelperText id="username-helper-text">
+            For example: iamawesome
+          </FormHelperText>
         </FormControl>
         <FormControl required>
           <InputLabel htmlFor="phone">Phone (Hong Kong)</InputLabel>
@@ -99,7 +112,9 @@ const Register = ({location, history}) => {
             aria-describedby="phone-helper-text"
             onChange={handleChange}
           />
-          <FormHelperText id="phone-helper-text">For example: +85212345678</FormHelperText>
+          <FormHelperText id="phone-helper-text">
+            For example: +85212345678
+          </FormHelperText>
         </FormControl>
         <FormControl required>
           <InputLabel htmlFor="room">Room number</InputLabel>
@@ -108,7 +123,9 @@ const Register = ({location, history}) => {
             aria-describedby="room-helper-text"
             onChange={handleChange}
           />
-          <FormHelperText id="room-helper-text">For example: 924A</FormHelperText>
+          <FormHelperText id="room-helper-text">
+            For example: 924A
+          </FormHelperText>
         </FormControl>
         <Button type="submit" onClick={handleSubmit}>
           Submit
