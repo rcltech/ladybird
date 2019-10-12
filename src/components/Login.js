@@ -56,7 +56,7 @@ const onLoginSuccess = async (location, history, googleUser) => {
         googleUser.getAuthResponse().id_token
       }`
     );
-  if (response.data.data.register) {
+  if (response.data.data.login.register) {
     history.push({
       pathname: "register",
       state: {
