@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/ladybird/static/css/main.b100e6da.chunk.css",
-    "main.js": "/ladybird/static/js/main.f679087a.chunk.js",
-    "main.js.map": "/ladybird/static/js/main.f679087a.chunk.js.map",
-    "runtime-main.js": "/ladybird/static/js/runtime-main.d471dde4.js",
-    "runtime-main.js.map": "/ladybird/static/js/runtime-main.d471dde4.js.map",
-    "static/js/2.19e12d1c.chunk.js": "/ladybird/static/js/2.19e12d1c.chunk.js",
-    "static/js/2.19e12d1c.chunk.js.map": "/ladybird/static/js/2.19e12d1c.chunk.js.map",
-    "index.html": "/ladybird/index.html",
-    "precache-manifest.66dd036ca6f01d4667edb671e58237af.js": "/ladybird/precache-manifest.66dd036ca6f01d4667edb671e58237af.js",
-    "service-worker.js": "/ladybird/service-worker.js",
-    "static/css/main.b100e6da.chunk.css.map": "/ladybird/static/css/main.b100e6da.chunk.css.map"
+    "main.css": "/static/css/main.38325a42.chunk.css",
+    "main.js": "/static/js/main.5b4c46db.chunk.js",
+    "main.js.map": "/static/js/main.5b4c46db.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.199cea86.js",
+    "runtime-main.js.map": "/static/js/runtime-main.199cea86.js.map",
+    "static/js/2.5099e6ec.chunk.js": "/static/js/2.5099e6ec.chunk.js",
+    "static/js/2.5099e6ec.chunk.js.map": "/static/js/2.5099e6ec.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.cc5944670c3c8f002e987d6f85df7994.js": "/precache-manifest.cc5944670c3c8f002e987d6f85df7994.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.38325a42.chunk.css.map": "/static/css/main.38325a42.chunk.css.map",
+    "static/media/logo.png": "/static/media/logo.83c07097.png"
   }
 }
