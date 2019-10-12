@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
+
 import {
-  Container,
-  FormGroup,
-  FormControl,
-  InputLabel,
-  Input,
-  FormHelperText,
   Button,
-  makeStyles
-} from '@material-ui/core';
-import { UserContext } from "../UserContext";
+  Container,
+  FormControl,
+  FormGroup,
+  FormHelperText,
+  Input,
+  InputLabel,
+  makeStyles,
+} from "@material-ui/core";
 import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({
@@ -24,10 +25,8 @@ const useStyles = makeStyles({
   }
 });
 
-const Register = props => {
+const Register = ({location, history}) => {
   const classes = useStyles();
-  // const { user } = props;
-
   const [form, setForm] = useState({
     room: null,
     year: null
@@ -38,63 +37,84 @@ const Register = props => {
     setForm(form);
   };
 
-  const handleSubmit = () => {
-    // TODO: send post request to server
-    alert(`submitted: ${form}`);
+  const handleSubmit = async () => {
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query: `
+      mutation{
+        register(
+          user: {
+            username: "${form.username}"
+            phone: "${form.phone}"
+            room_no: "${form.room}"
+          }
+        ){
+          username
+        }
+      }
+      `
+    }, {
+      headers: {
+        'authorization': location.state.token
+      }
+    });
+    if(response.data.data.register === null) {
+      history.replace({location: "/"})
+    }
+    else {
+      window.location.replace(`https://${sessionStorage.getItem("redirectTo")}?id=${location.state.token}`)
+    }
   };
 
+  if(location.state === undefined) return <Redirect to="/"/>;
+  const token =  location.state.token;
+  const user = location.state.user;
+
   return (
-    <UserContext.Consumer>
-      {({user}) => (
-        user ? (
-          <Container className={classes.container}>
-            <h3>Hello, new user!</h3>
-            <div className={classes.disclaimer}>
-              To continue using our services, we require you to sign in with Google,
-              in which you have successfully completed that step. While we implicitly
-              have access to your Google account information, other important details
-              such as your room number are needed to provide the best experience.
-              <br />
-              By submitting the form below, you agree that we are allowed to store
-              your info in our database. We will not share your data with any other
-              3rd party applications and services.
-            </div>
-            <FormGroup className={classes.form}>
-              <FormControl required>
-                <InputLabel htmlFor="username">Username</InputLabel>
-                <Input
-                  id="username"
-                  aria-describedby="username-helper-text"
-                  onChange={handleChange}
-                />
-                <FormHelperText id="username-helper-text">iamawesome</FormHelperText>
-              </FormControl>
-              <FormControl required>
-                <InputLabel htmlFor="phone">Phone (Hong Kong)</InputLabel>
-                <Input
-                  id="phone"
-                  aria-describedby="phone-helper-text"
-                  onChange={handleChange}
-                />
-                <FormHelperText id="phone-helper-text">+85212345678</FormHelperText>
-              </FormControl>
-              <FormControl required>
-                <InputLabel htmlFor="room">Room number</InputLabel>
-                <Input
-                  id="room"
-                  aria-describedby="room-helper-text"
-                  onChange={handleChange}
-                />
-                <FormHelperText id="room-helper-text">1010A</FormHelperText>
-              </FormControl>
-              <Button type="submit" onClick={handleSubmit}>
-                Submit
-              </Button>
-            </FormGroup>
-          </Container>
-        ): <Redirect to={"/"}/>
-      )}
-    </UserContext.Consumer>
+    <Container className={classes.container}>
+      <h3>{`Hello, ${user.first_name}`}</h3>
+      <div className={classes.disclaimer}>
+        To continue using our services, we require you to sign in with Google,
+        in which you have successfully completed that step. While we implicitly
+        have access to your Google account information, other important details
+        such as your room number are needed to provide the best experience.
+        <br />
+        By submitting the form below, you agree that we are allowed to store
+        your info in our database. We will not share your data with any other
+        3rd party applications and services.
+      </div>
+      <FormGroup className={classes.form}>
+        <FormControl required>
+          <InputLabel htmlFor="username">Username</InputLabel>
+          <Input
+            id="username"
+            aria-describedby="username-helper-text"
+            onChange={handleChange}
+          />
+          <FormHelperText id="username-helper-text">For example: iamawesome</FormHelperText>
+        </FormControl>
+        <FormControl required>
+          <InputLabel htmlFor="phone">Phone (Hong Kong)</InputLabel>
+          <Input
+            id="phone"
+            aria-describedby="phone-helper-text"
+            onChange={handleChange}
+          />
+          <FormHelperText id="phone-helper-text">For example: +85212345678</FormHelperText>
+        </FormControl>
+        <FormControl required>
+          <InputLabel htmlFor="room">Room number</InputLabel>
+          <Input
+            id="room"
+            aria-describedby="room-helper-text"
+            onChange={handleChange}
+          />
+          <FormHelperText id="room-helper-text">For example: 924A</FormHelperText>
+        </FormControl>
+        <Button type="submit" onClick={handleSubmit}>
+          Submit
+        </Button>
+      </FormGroup>
+    </Container>
   );
 };
 
