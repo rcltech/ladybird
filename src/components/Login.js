@@ -34,8 +34,10 @@ const onLoginSuccess = async (location, history, googleUser) => {
   if (window.location.host.includes("localhost"))
     HOST_URL = "http://localhost:4000/graphql";
   else HOST_URL = "https://phoenix.rctech.club/graphql";
-  const response = await axios.post(HOST_URL, {
-    query: `
+  const response = await axios.post(
+    HOST_URL,
+    {
+      query: `
     mutation {
       login{
         token
@@ -44,20 +46,26 @@ const onLoginSuccess = async (location, history, googleUser) => {
       }
     }
     `,
-  },{
-    headers: {
-      'authorization': googleUser.getAuthResponse().id_token
+    },
+    {
+      headers: {
+        authorization: googleUser.getAuthResponse().id_token,
+      },
     }
-  });
+  );
+  console.log(response.data);
 
-  const { login: {token, login_status, register}} = response.data;
-
+  const {
+    data: {
+      login: { token, login_status, register },
+    },
+  } = response.data;
   if (login_status)
-    window.location.replace(
-      `https://${sessionStorage.getItem("redirectTo")}?id=${
-        token
-      }`
-    );
+    if (sessionStorage.getItem("redirectTo").length > 0) {
+      window.location.replace(
+        `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
+      );
+    }
   if (register) {
     history.push({
       pathname: "register",
