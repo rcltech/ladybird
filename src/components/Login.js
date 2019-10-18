@@ -38,6 +38,7 @@ const onLoginSuccess = async (location, history, googleUser) => {
     query: `
     mutation {
       login{
+        token
         login_status
         register
       }
@@ -49,14 +50,15 @@ const onLoginSuccess = async (location, history, googleUser) => {
     }
   });
 
-  console.log(response.data);
-  if (response.data.data.login.login_status)
+  const { login: {token, login_status, register}} = response.data;
+
+  if (login_status)
     window.location.replace(
       `https://${sessionStorage.getItem("redirectTo")}?id=${
-        googleUser.getAuthResponse().id_token
+        token
       }`
     );
-  if (response.data.data.login.register) {
+  if (register) {
     history.push({
       pathname: "register",
       state: {
