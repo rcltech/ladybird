@@ -34,8 +34,10 @@ const onLoginSuccess = async (location, history, googleUser) => {
   if (window.location.host.includes("localhost"))
     HOST_URL = "http://localhost:4000/graphql";
   else HOST_URL = "https://phoenix.rctech.club/graphql";
-  const response = await axios.post(HOST_URL, {
-    query: `
+  const response = await axios.post(
+    HOST_URL,
+    {
+      query: `
     mutation {
       login{
         login_status
@@ -43,11 +45,13 @@ const onLoginSuccess = async (location, history, googleUser) => {
       }
     }
     `,
-  },{
-    headers: {
-      'authorization': googleUser.getAuthResponse().id_token
+    },
+    {
+      headers: {
+        authorization: googleUser.getAuthResponse().id_token,
+      },
     }
-  });
+  );
 
   console.log(response.data);
   if (response.data.data.login.login_status)
@@ -77,7 +81,9 @@ const Login = ({ history, location, googleUser }) => {
     <Container className={classes.container}>
       <div className={classes.text}>
         <h3>Welcome RC Lee Hallmate!</h3>
-        <h4>To continue using our app, please sign in.</h4>
+        <h4>
+          To continue using our app, please sign in using your hku account.
+        </h4>
       </div>
       <GoogleLogin
         onSuccess={googleUser => onLoginSuccess(location, history, googleUser)}
