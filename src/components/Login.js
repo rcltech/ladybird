@@ -40,6 +40,7 @@ const onLoginSuccess = async (location, history, googleUser) => {
       query: `
     mutation {
       login{
+        token
         login_status
         register
       }
@@ -52,15 +53,20 @@ const onLoginSuccess = async (location, history, googleUser) => {
       },
     }
   );
-
   console.log(response.data);
-  if (response.data.data.login.login_status)
-    window.location.replace(
-      `https://${sessionStorage.getItem("redirectTo")}?id=${
-        googleUser.getAuthResponse().id_token
-      }`
-    );
-  if (response.data.data.login.register) {
+
+  const {
+    data: {
+      login: { token, login_status, register },
+    },
+  } = response.data;
+  if (login_status)
+    if (sessionStorage.getItem("redirectTo").length > 0) {
+      window.location.replace(
+        `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
+      );
+    }
+  if (register) {
     history.push({
       pathname: "register",
       state: {
