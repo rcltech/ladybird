@@ -87,11 +87,11 @@ const Register = ({ location, history }) => {
         To continue using our services, we require you to sign in with Google,
         in which you have successfully completed that step. While we implicitly
         have access to your Google account information, other important details
-        such as your room number are needed to provide the best experience.
+        such as your room number are needed to deliver the best user experience.
         <br />
         By submitting the form below, you agree that we are allowed to store
-        your info in our database. We will not share your data with any other
-        3rd party applications and services.
+        your info in our database. We will not share your personal data with any
+        other 3rd party applications and services.
       </div>
       <FormGroup className={classes.form}>
         <FormControl required>

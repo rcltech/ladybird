@@ -87,7 +87,9 @@ const Login = ({ history, location, googleUser }) => {
     <Container className={classes.container}>
       <div className={classes.text}>
         <h3>Welcome RC Lee Hallmate!</h3>
-        <h4>To continue using our app, please sign in.</h4>
+        <h4>
+          To continue using our app, please sign in using your hku account.
+        </h4>
       </div>
       <GoogleLogin
         onSuccess={googleUser => onLoginSuccess(location, history, googleUser)}
