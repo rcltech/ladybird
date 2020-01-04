@@ -62,9 +62,10 @@ const onLoginSuccess = async (location, history, googleUser) => {
   } = response.data;
   if (login_status)
     if (sessionStorage.getItem("redirectTo").length > 0) {
-      window.location.replace(
-        `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
-      );
+      let url = `https://`;
+      if (process.env.NODE_ENV === 'development') url = `http://`;
+      url += `${sessionStorage.getItem("redirectTo")}?id=${token}`
+      window.location.replace(url);
     }
   if (register) {
     history.push({
