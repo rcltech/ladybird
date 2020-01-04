@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-
 import {
   Button,
   Container,
@@ -38,10 +37,10 @@ const Register = ({ location, history }) => {
   };
 
   const handleSubmit = async () => {
-    let HOST_URL = "";
-    if (window.location.host.includes("localhost"))
-      HOST_URL = "http://localhost:4000/graphql";
-    else HOST_URL = "https://phoenix.rctech.club/graphql";
+    const HOST_URL =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:4000/graphql"
+        : "https://phoenix.rctech.club/graphql";
     const response = await axios.post(
       HOST_URL,
       {
@@ -68,16 +67,21 @@ const Register = ({ location, history }) => {
     if (response.data.data.register === null) {
       history.replace({ location: "/" });
     } else {
-      window.location.replace(
-        `https://${sessionStorage.getItem("redirectTo")}?id=${
-          location.state.token
-        }`
-      );
+      if (sessionStorage.getItem("redirectTo").length > 0) {
+        window.location.replace(
+          process.env.NODE_ENV === "development"
+            ? `http://${sessionStorage.getItem("redirectTo")}?id=${
+                location.state.token
+              }`
+            : `https://${sessionStorage.getItem("redirectTo")}?id=${
+                location.state.token
+              }`
+        );
+      }
     }
   };
 
   if (location.state === undefined) return <Redirect to="/" />;
-  const token = location.state.token;
   const user = location.state.user;
 
   return (
