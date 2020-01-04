@@ -77,6 +77,16 @@ const Register = ({ location, history }) => {
                 location.state.token
               }`
         );
+      } else {
+        window.location.replace(
+          process.env.NODE_ENV === "development"
+            ? `http://${window.location.host}?id=${
+              location.state.token
+            }`
+            : `https://${window.location.host}?id=${
+              location.state.token
+            }`
+        );
       }
     }
   };
