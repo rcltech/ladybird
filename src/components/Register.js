@@ -68,16 +68,14 @@ const Register = ({ location, history }) => {
     if (response.data.data.register === null) {
       history.replace({ location: "/" });
     } else {
-      window.location.replace(
-        `https://${sessionStorage.getItem("redirectTo")}?id=${
-          location.state.token
-        }`
-      );
+      let url = `https://`;
+      if (process.env.NODE_ENV === 'development') url = `http://`;
+      url += `${sessionStorage.getItem("redirectTo")}?id=${location.state.token}`;
+      window.location.replace(url);
     }
   };
 
   if (location.state === undefined) return <Redirect to="/" />;
-  const token = location.state.token;
   const user = location.state.user;
 
   return (
