@@ -9,6 +9,9 @@ install:
   - yarn install
 script:
   - yarn build
+  - docker login --username $DOCKER_USER -p $DOCKER_PASS
+  - docker build -t rctechclub/ladybird:latest .
+  - docker push rctechclub/ladybird:latest
 deploy:
   provider: pages
   skip_cleanup: true
