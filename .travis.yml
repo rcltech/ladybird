@@ -4,18 +4,32 @@ os:
 node_js:
   - "10"
 cache: npm
-install:
-  - npm install
-script:
-  - npm run build
-  - docker login --username $DOCKER_USER -p $DOCKER_PASS
-  - docker build -t rctechclub/ladybird:latest .
-  - docker push rctechclub/ladybird:latest
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep_history: true
-  local_dir: ./build
-  on:
-    branch: master
+stages:
+  - deploy-gh-pages
+  - docker
+jobs:
+  include:
+    - stage: deploy-gh-pages
+      install:
+        - npm install
+      script:
+        - npm run build
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $GITHUB_TOKEN
+        keep_history: true
+        local_dir: ./build
+        on:
+          branch: master
+    - stage: docker
+      install:
+        - npm install
+      script:
+        - npm run build
+        - docker login --username $DOCKER_USER -p $DOCKER_PASS
+        - docker build -t rctechclub/ladybird:latest .
+        - docker push rctechclub/ladybird:latest
+      branches:
+        only:
+          - master
