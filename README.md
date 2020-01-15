@@ -15,13 +15,13 @@ the API Server `phoenix`.
 
 ```
 localStorage.setItem('id', qs.parse(window.location.search).id || '');
-    if (localStorage.getItem('id') === '') {
-      const app_url = 'owl.rctech.club';
-      window.location.replace(
-        `https://ladybird.rctech.club/?redirectTo=${app_url}`
-      );
-    }
+
+if (localStorage.getItem('id') === '') {
+  const app_url = 'owl.rctech.club';
+  window.location.replace(
+    `https://ladybird.rctech.club/?redirectTo=${app_url}`
+  );
+}
 ```
 
 Note that this uses `query-string` aka `qs` as an npm dependency.
-
