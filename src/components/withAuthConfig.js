@@ -5,6 +5,11 @@ const withAuthConfig = WrappedComponent => {
   const clientID =
     "798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com";
 
+  const HOST_URL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:4000/graphql"
+      : "https://phoenix.rctech.club/graphql";
+
   const readFromLocalStorage = () => {
     const auth2 = window.gapi.auth2.getAuthInstance();
     const profile = auth2.currentUser.get().getBasicProfile();
@@ -19,23 +24,19 @@ const withAuthConfig = WrappedComponent => {
 
   const onLoginSuccess = async (location, history, googleUser) => {
     const user = readFromLocalStorage();
-    const HOST_URL =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:4000/graphql"
-        : "https://phoenix.rctech.club/graphql";
 
     const response = await axios.post(
       HOST_URL,
       {
         query: `
-    mutation {
-      login{
-        token
-        login_status
-        register
-      }
-    }
-    `,
+          mutation {
+            login{
+              token
+              login_status
+              register
+            }
+          }
+        `,
       },
       {
         headers: {
