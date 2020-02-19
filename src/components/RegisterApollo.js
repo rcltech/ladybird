@@ -74,13 +74,43 @@ const Register = ({ setGoogleUser, location, history }) => {
     history,
   ]);
 
+  const validateForm = form => {
+    const isEmpty = value => !value || value === "";
+    const fields = [
+      {
+        id: "username",
+        method: value => RegExp("^[0-9A-z]{4,20}$").test(value),
+      },
+      {
+        id: "phone",
+        method: value => RegExp("^[0-9]{8}$").test(value),
+      },
+      {
+        id: "room_no",
+        name: "room number",
+        method: value => RegExp("^[0-9]{3,4}[A-Z]$").test(value),
+      },
+    ];
+    for (const field of fields) {
+      const value = form[field.id];
+      if (isEmpty(value) || !field.method(value))
+        return {
+          validation: false,
+          field: { id: field.name ? field.name : field.id, value },
+        };
+    }
+    return { validation: true };
+  };
+
   const handleChange = e => {
     form[e.target.id] = e.target.value;
     setForm(form);
   };
 
   const handleSubmit = async () => {
-    await register({ variables: form });
+    const { validation, field } = validateForm(form);
+    if (validation) await register({ variables: form });
+    else alert(`${field.id} of value ${field.value} is not allowed.`);
   };
 
   if (location.state === undefined) return <Redirect to="/" />;
@@ -107,9 +137,11 @@ const Register = ({ setGoogleUser, location, history }) => {
             id="username"
             aria-describedby="username-helper-text"
             onChange={handleChange}
+            inputProps={{ maxLength: 20 }}
           />
           <FormHelperText id="username-helper-text">
-            For example: iamawesome
+            For example: iamawesome. Only alphanumeric characters are allowed
+            with a minimum length of 4 and a maximum length of 20.
           </FormHelperText>
         </FormControl>
         <FormControl required>
@@ -118,9 +150,11 @@ const Register = ({ setGoogleUser, location, history }) => {
             id="phone"
             aria-describedby="phone-helper-text"
             onChange={handleChange}
+            type={"number"}
+            inputProps={{ maxLength: 8 }}
           />
           <FormHelperText id="phone-helper-text">
-            For example: +85212345678
+            For example: 12345678
           </FormHelperText>
         </FormControl>
         <FormControl required>
@@ -129,6 +163,7 @@ const Register = ({ setGoogleUser, location, history }) => {
             id="room_no"
             aria-describedby="room-helper-text"
             onChange={handleChange}
+            inputProps={{ maxLength: 5 }}
           />
           <FormHelperText id="room-helper-text">
             For example: 924A
