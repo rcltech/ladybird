@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import GoogleLogin from "react-google-login";
 import { Container, makeStyles } from "@material-ui/core";
 import qs from "query-string";
@@ -18,8 +18,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
-  console.log("Wrapped");
   const classes = useStyles();
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [login, { data }] = useMutation(LOGIN);
 
   sessionStorage.setItem(
@@ -46,6 +46,10 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
 
   const handleFailure = () => {
     console.log("Failed to login");
+  };
+
+  const handleClicked = () => {
+    setButtonDisabled(true);
   };
 
   useEffect(() => {
@@ -88,8 +92,10 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
 
       <GoogleLogin
         onSuccess={handleLogin}
+        onRequest={handleClicked}
         onFailure={handleFailure}
         clientId={clientID}
+        disabled={buttonDisabled}
         cookiePolicy={"single_host_origin"}
       />
       <Typography variant="h6" style={{ margin: "40px 0" }}>
