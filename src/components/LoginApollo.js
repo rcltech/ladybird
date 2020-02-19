@@ -92,6 +92,18 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
         clientId={clientID}
         cookiePolicy={"single_host_origin"}
       />
+      <Typography variant="h6" style={{ margin: "40px 0" }}>
+        If you keep coming back here after login, please{" "}
+        <a
+          href={
+            process.env.NODE_ENV === "development"
+              ? `http://${sessionStorage.getItem("redirectTo")}`
+              : `https://${sessionStorage.getItem("redirectTo")}`
+          }
+        >
+          click here
+        </a>
+      </Typography>
     </Container>
   );
 };
