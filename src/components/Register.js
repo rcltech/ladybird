@@ -11,6 +11,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles({
   container: {
@@ -96,7 +97,7 @@ const Register = ({ location, history }) => {
 
   return (
     <Container className={classes.container}>
-      <h3>{`Hello, ${user.first_name}`}</h3>
+      <Typography variant="h3">{`Hello, ${user.first_name}`}</Typography>
       <div className={classes.disclaimer}>
         To continue using our services, we require you to sign in with Google,
         in which you have successfully completed that step. While we implicitly

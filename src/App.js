@@ -1,26 +1,27 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
-import "./App.css";
-
-import Login from "./components/Login";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Register from "./components/Register";
-import Header from "./components/Header";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import LoginApollo from "./components/LoginApollo";
 
-class App extends React.Component {
+const useStyles = makeStyles(theme => ({
+  container: {
+    textAlign: "center",
+    justifyContent: "center",
+    margin: "auto",
+  },
+}));
 
-  render() {
-    return (
-      <div className="App">
-        <Header />
-        <div>
-          <Switch>
-            <Route path="/" exact component={Login} />
-            <Route path="/register" exact component={Register} />
-          </Switch>
-        </div>
-      </div>
-    );
-  }
-}
-
-export default App;
+export const App = () => {
+  const classes = useStyles();
+  return (
+    <div className={classes.container}>
+      <Router>
+        <Switch>
+          <Route path="/" exact component={LoginApollo} />
+          <Route path="/register" exact component={Register} />
+        </Switch>
+      </Router>
+    </div>
+  );
+};
