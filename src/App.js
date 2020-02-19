@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Register from "./components/Register";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import LoginApollo from "./components/LoginApollo";
+import RegisterApollo from "./components/RegisterApollo";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -19,7 +19,7 @@ export const App = () => {
       <Router>
         <Switch>
           <Route path="/" exact component={LoginApollo} />
-          <Route path="/register" exact component={Register} />
+          <Route path="/register" exact component={RegisterApollo} />
         </Switch>
       </Router>
     </div>

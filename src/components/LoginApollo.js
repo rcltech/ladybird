@@ -73,6 +73,7 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
           pathname: "register",
           state: {
             user,
+            googleUser,
             token: googleUser.getAuthResponse().id_token,
           },
         });
