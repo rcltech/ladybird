@@ -43,6 +43,7 @@ const Register = ({ setGoogleUser, location, history }) => {
       history.replace({ location: "/" });
     }
     if (loginData && loginData.login && loginData.login.token) {
+      // login is successful, now redirect to other sites
       const { token } = loginData.login;
       if (sessionStorage.getItem("redirectTo").length > 0) {
         window.location.replace(
@@ -62,7 +63,10 @@ const Register = ({ setGoogleUser, location, history }) => {
       registerData.register &&
       registerData.register.username
     ) {
-      login().then();
+      // register is successful, now login to obtain session token
+      login()
+        .then()
+        .catch();
     }
   }, [
     registerData,
@@ -107,9 +111,12 @@ const Register = ({ setGoogleUser, location, history }) => {
     setForm(form);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const { validation, field } = validateForm(form);
-    if (validation) await register({ variables: form });
+    if (validation)
+      register({ variables: form })
+        .then()
+        .catch();
     else alert(`${field.id} of value ${field.value} is not allowed.`);
   };
 

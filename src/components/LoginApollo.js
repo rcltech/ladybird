@@ -39,9 +39,11 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
     };
   };
 
-  const handleLogin = async googleUserLogin => {
+  const handleLogin = googleUserLogin => {
     setGoogleUser(googleUserLogin);
-    await login();
+    login()
+      .then()
+      .catch();
   };
 
   const handleFailure = () => {
