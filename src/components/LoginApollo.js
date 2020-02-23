@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import GoogleLogin from "react-google-login";
 import { Container, makeStyles } from "@material-ui/core";
 import qs from "query-string";
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const classes = useStyles();
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [login, { data }] = useMutation(LOGIN);
+  const [login] = useMutation(LOGIN);
 
   sessionStorage.setItem(
     "redirectTo",
@@ -42,46 +42,43 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const handleLogin = googleUserLogin => {
     setGoogleUser(googleUserLogin);
     login()
-      .then()
-      .catch();
+      .then(res => {
+        const {
+          login: { token, login_status, register },
+        } = res.data;
+        if (login_status) {
+          if (sessionStorage.getItem("redirectTo").length > 0) {
+            window.location.replace(
+              process.env.NODE_ENV === "development"
+                ? `http://${sessionStorage.getItem("redirectTo")}?id=${token}`
+                : `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
+            );
+          }
+        }
+        if (register) {
+          const user = readFromLocalStorage();
+          history.push({
+            pathname: "register",
+            state: {
+              user,
+              googleUser,
+              token: googleUser.getAuthResponse().id_token,
+            },
+          });
+        }
+      })
+      .catch(_ => {
+        alert("There was an error logging you in");
+      });
   };
 
   const handleFailure = () => {
-    console.log("Failed to login");
+    alert("Failed Google Login. Please try again.");
   };
 
   const handleClicked = () => {
     setButtonDisabled(true);
   };
-
-  useEffect(() => {
-    if (data) {
-      console.log(data);
-      const {
-        login: { token, login_status, register },
-      } = data;
-      if (login_status) {
-        if (sessionStorage.getItem("redirectTo").length > 0) {
-          window.location.replace(
-            process.env.NODE_ENV === "development"
-              ? `http://${sessionStorage.getItem("redirectTo")}?id=${token}`
-              : `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
-          );
-        }
-      }
-      if (register) {
-        const user = readFromLocalStorage();
-        history.push({
-          pathname: "register",
-          state: {
-            user,
-            googleUser,
-            token: googleUser.getAuthResponse().id_token,
-          },
-        });
-      }
-    }
-  }, [data, googleUser, history]);
 
   return (
     <Container className={classes.container}>
