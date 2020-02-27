@@ -121,7 +121,8 @@ const Register = ({ setGoogleUser, location, history }) => {
   };
 
   if (location.state === undefined) return <Redirect to="/" />;
-  setGoogleUser(location.state.googleUser);
+  console.log(location.state);
+  setGoogleUser(location.state.googleUserLogin);
   const user = location.state.user;
 
   return (

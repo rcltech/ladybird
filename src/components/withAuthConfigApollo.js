@@ -27,6 +27,8 @@ export const withAuthConfigApollo = ChildComponent => {
       link,
     });
 
+    console.log(googleUser);
+
     return (
       <ApolloProvider client={client}>
         <ChildComponent

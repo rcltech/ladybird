@@ -40,6 +40,7 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   };
 
   const handleLogin = googleUserLogin => {
+    console.log(googleUserLogin);
     setGoogleUser(googleUserLogin);
     login()
       .then(res => {
@@ -61,13 +62,14 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
             pathname: "register",
             state: {
               user,
-              googleUser,
-              token: googleUser.getAuthResponse().id_token,
+              googleUserLogin,
+              token: googleUserLogin.getAuthResponse().id_token,
             },
           });
         }
       })
       .catch(_ => {
+        console.log(_);
         alert("There was an error logging you in");
       });
   };
