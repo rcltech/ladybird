@@ -58,7 +58,7 @@ const Register = ({ setGoogleUser, location, history }) => {
       {
         id: "room_no",
         name: "room number",
-        method: value => RegExp("^[0-9]{3,4}[A-Z]$").test(value),
+        method: value => RegExp("^[1-9][0-9]{2,3}([A,B])?$").test(value),
       },
     ];
     for (const field of fields) {
