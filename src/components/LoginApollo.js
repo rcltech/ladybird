@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import { withAuthConfigApollo } from "./withAuthConfigApollo";
 import { useMutation } from "@apollo/react-hooks";
 import { LOGIN } from "../gql/login";
+import Cookies from "universal-cookie";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -52,6 +53,13 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
 
         // If the login was successful
         if (login_status) {
+          const cookies = new Cookies();
+          const cookieDomain =
+            process.env.NODE_ENV === "development"
+              ? "localhost"
+              : ".rctech.club";
+
+          cookies.set("RCTC_USER", token, { path: "/", domain: cookieDomain });
           if (sessionStorage.getItem("redirectTo").length > 0) {
             window.location.replace(
               process.env.NODE_ENV === "development"
