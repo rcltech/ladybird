@@ -13,6 +13,7 @@ export const withAuthConfigApollo = ChildComponent => {
 
   return props => {
     const [googleUser, setGoogleUser] = useState();
+
     const link = new HttpLink({
       uri: HOST_URL,
       headers: {
