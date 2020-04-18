@@ -12,7 +12,6 @@ import {
 } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
-import { LOGIN } from "../gql/login";
 import { REGISTER } from "../gql/register";
 import { withAuthConfigApollo } from "./withAuthConfigApollo";
 
@@ -31,52 +30,19 @@ const useStyles = makeStyles({
 const Register = ({ setGoogleUser, location, history }) => {
   const classes = useStyles();
   const [form, setForm] = useState({});
-  const [register, { data: registerData, error: registerError }] = useMutation(
-    REGISTER
-  );
-  const [login, { data: loginData, error: loginError }] = useMutation(LOGIN);
+  const [register, { error: registerError }] = useMutation(REGISTER);
 
   useEffect(() => {
-    if (registerError || loginError) {
-      console.log("register error:", registerError);
-      console.log("login error:", loginError);
+    if (location.state && location.state.googleUserLogin) {
+      setGoogleUser(location.state.googleUserLogin);
+    }
+    if (registerError) {
+      alert(
+        "There was an error completing registration. Please register again."
+      );
       history.replace({ location: "/" });
     }
-    if (loginData && loginData.login && loginData.login.token) {
-      // login is successful, now redirect to other sites
-      const { token } = loginData.login;
-      if (sessionStorage.getItem("redirectTo").length > 0) {
-        window.location.replace(
-          process.env.NODE_ENV === "development"
-            ? `http://${sessionStorage.getItem("redirectTo")}?id=${token}`
-            : `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
-        );
-      } else {
-        window.location.replace(
-          process.env.NODE_ENV === "development"
-            ? `http://${window.location.host}?id=${token}`
-            : `https://${window.location.host}?id=${token}`
-        );
-      }
-    } else if (
-      registerData &&
-      registerData.register &&
-      registerData.register.username
-    ) {
-      // register is successful, now login to obtain session token
-      login()
-        .then()
-        .catch();
-    }
-  }, [
-    registerData,
-    registerError,
-    login,
-    loginData,
-    loginError,
-    location,
-    history,
-  ]);
+  }, [registerError, location, history, setGoogleUser]);
 
   const validateForm = form => {
     const isEmpty = value => !value || value === "";
@@ -111,18 +77,28 @@ const Register = ({ setGoogleUser, location, history }) => {
     setForm(form);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { validation, field } = validateForm(form);
-    if (validation)
-      register({ variables: form })
-        .then()
-        .catch();
-    else alert(`${field.id} of value ${field.value} is not allowed.`);
+    if (validation) {
+      try {
+        const response = await register({ variables: form });
+        const regData = response.data;
+        if (regData && regData.register && regData.register.username) {
+          // register is successful, now go back to login
+          alert("Registration complete! Login again to continue");
+          history.replace({ location: "/" });
+        } else {
+          alert("There was an error with registration. Please try again.");
+          history.replace({ location: "/" });
+        }
+      } catch (e) {
+        alert("There was an error with registration. Please try again");
+        history.replace({ location: "/" });
+      }
+    } else alert(`${field.id} of value ${field.value} is not allowed.`);
   };
 
   if (location.state === undefined) return <Redirect to="/" />;
-  console.log(location.state);
-  setGoogleUser(location.state.googleUserLogin);
   const user = location.state.user;
 
   return (

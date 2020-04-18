@@ -22,10 +22,12 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [login] = useMutation(LOGIN);
 
-  sessionStorage.setItem(
-    "redirectTo",
-    qs.parse(location.search).redirectTo || ""
-  );
+  if (sessionStorage.getItem("redirectTo") === undefined) {
+    sessionStorage.setItem(
+      "redirectTo",
+      qs.parse(location.search).redirectTo || ""
+    );
+  }
 
   const readFromLocalStorage = () => {
     const auth2 = window.gapi.auth2.getAuthInstance();
@@ -47,6 +49,8 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
         const {
           login: { token, login_status, register },
         } = res.data;
+
+        // If the login was successful
         if (login_status) {
           if (sessionStorage.getItem("redirectTo").length > 0) {
             window.location.replace(
@@ -56,6 +60,8 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
             );
           }
         }
+
+        // If the user needs to register
         if (register) {
           const user = readFromLocalStorage();
           history.push({
