@@ -23,7 +23,7 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [login] = useMutation(LOGIN);
 
-  if (sessionStorage.getItem("redirectTo") === undefined) {
+  if (sessionStorage.getItem("redirectTo") === null) {
     sessionStorage.setItem(
       "redirectTo",
       qs.parse(location.search).redirectTo || ""
