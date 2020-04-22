@@ -8,6 +8,8 @@ import {
   Input,
   InputLabel,
   Typography,
+  FormControlLabel,
+  Checkbox,
   makeStyles,
 } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
@@ -20,7 +22,8 @@ const useStyles = makeStyles({
     margin: "3vh auto",
   },
   disclaimer: {
-    margin: "1vmax",
+    margin: "2vh auto",
+    textAlign: "left",
   },
   form: {
     margin: "2vh auto",
@@ -29,6 +32,7 @@ const useStyles = makeStyles({
 
 const Register = ({ setGoogleUser, location, history }) => {
   const classes = useStyles();
+  const [privacyAgreement, setPrivacyAgreement] = useState(false);
   const [form, setForm] = useState({});
   const [register, { error: registerError }] = useMutation(REGISTER);
 
@@ -45,6 +49,7 @@ const Register = ({ setGoogleUser, location, history }) => {
   }, [registerError, location, history, setGoogleUser]);
 
   const validateForm = form => {
+    // validate form fields
     const isEmpty = value => !value || value === "";
     const fields = [
       {
@@ -66,9 +71,16 @@ const Register = ({ setGoogleUser, location, history }) => {
       if (isEmpty(value) || !field.method(value))
         return {
           validation: false,
-          field: { id: field.name ? field.name : field.id, value },
+          message: `Your ${field.name ||
+            field.id} of ${value} is not accepted.`,
         };
     }
+    // validate privacy agreement
+    if (!privacyAgreement)
+      return {
+        validation: false,
+        message: "You need to agree to our privacy terms.",
+      };
     return { validation: true };
   };
 
@@ -78,7 +90,7 @@ const Register = ({ setGoogleUser, location, history }) => {
   };
 
   const handleSubmit = async () => {
-    const { validation, field } = validateForm(form);
+    const { validation, message } = validateForm(form);
     if (validation) {
       try {
         const response = await register({ variables: form });
@@ -95,7 +107,7 @@ const Register = ({ setGoogleUser, location, history }) => {
         alert("There was an error with registration. Please try again");
         history.replace({ location: "/" });
       }
-    } else alert(`${field.id} of value ${field.value} is not allowed.`);
+    } else alert(message);
   };
 
   if (location.state === undefined) return <Redirect to="/" />;
@@ -104,16 +116,7 @@ const Register = ({ setGoogleUser, location, history }) => {
   return (
     <Container className={classes.container}>
       <Typography variant="h3">{`Hello, ${user.first_name}`}</Typography>
-      <div className={classes.disclaimer}>
-        To continue using our services, we require you to sign in with Google,
-        in which you have successfully completed that step. While we implicitly
-        have access to your Google account information, other important details
-        such as your room number are needed to deliver the best user experience.
-        <br />
-        By submitting the form below, you agree that we are allowed to store
-        your info in our database. We will not share your personal data with any
-        other 3rd party applications and services.
-      </div>
+
       <FormGroup className={classes.form}>
         <FormControl required>
           <InputLabel htmlFor="username">Username</InputLabel>
@@ -153,6 +156,29 @@ const Register = ({ setGoogleUser, location, history }) => {
             For example: 924A
           </FormHelperText>
         </FormControl>
+        <div className={classes.disclaimer}>
+          <Typography variant={"h5"}>Privacy Agreement</Typography>
+          <Typography variant={"body1"}>
+            To continue using our services, we require you to sign in with
+            Google, in which you have successfully completed that step. While we
+            implicitly have access to your Google account information, other
+            important details such as your room number are needed to deliver the
+            best user experience. We will not share your personal data with any
+            other 3rd party applications and services.
+          </Typography>
+          <br />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privacyAgreement}
+                onChange={() => setPrivacyAgreement(!privacyAgreement)}
+                name="privacyAgreement"
+                color="primary"
+              />
+            }
+            label="I agree to the privacy agreement."
+          />
+        </div>
         <Button type="submit" onClick={handleSubmit}>
           Submit
         </Button>
