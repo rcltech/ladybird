@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     margin: "3vh auto",
   },
   text: {
-    marginBottom: "2vh",
+    margin: "4vh",
   },
 }));
 
@@ -99,9 +99,12 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   return (
     <Container className={classes.container}>
       <Header />
+      <div>
+        <Typography variant="h4">Login</Typography>
+      </div>
       <div className={classes.text}>
-        <Typography variant="h2">Welcome RC Lee Hall mate!</Typography>
-        <Typography variant="h5">
+        <Typography variant="h4">Welcome RC Lee Hall mate!</Typography>
+        <Typography variant="h6">
           To continue using our app, please sign in using your HKU account.
         </Typography>
       </div>
@@ -114,7 +117,7 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
         disabled={buttonDisabled}
         cookiePolicy={"single_host_origin"}
       />
-      <Typography variant="h6" style={{ margin: "40px 0" }}>
+      <Typography variant="body1" style={{ margin: "40px 0" }}>
         If you keep coming back here after login, please{" "}
         <a
           href={
