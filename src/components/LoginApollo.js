@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
   text: {
     margin: "4vh",
   },
+  redirect: {
+    margin: "40px auto",
+  },
 }));
 
 const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
@@ -117,18 +120,28 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
         disabled={buttonDisabled}
         cookiePolicy={"single_host_origin"}
       />
-      <Typography variant="body1" style={{ margin: "40px 0" }}>
-        If you keep coming back here after login, please{" "}
-        <a
-          href={
-            process.env.NODE_ENV === "development"
-              ? `http://${sessionStorage.getItem("redirectTo")}`
-              : `https://${sessionStorage.getItem("redirectTo")}`
-          }
-        >
-          click here
-        </a>
-      </Typography>
+
+      <div className={classes.redirect}>
+        {sessionStorage.getItem("redirectTo") !== "" ? (
+          <Typography variant="body1">
+            If you keep coming back here after login, please{" "}
+            <a
+              href={
+                process.env.NODE_ENV === "development"
+                  ? `http://${sessionStorage.getItem("redirectTo")}`
+                  : `https://${sessionStorage.getItem("redirectTo")}`
+              }
+            >
+              click here
+            </a>
+          </Typography>
+        ) : (
+          <Typography variant="body1">
+            Please re-visit the application that redirected you here. We
+            apologize for losing that information.
+          </Typography>
+        )}
+      </div>
     </Container>
   );
 };
