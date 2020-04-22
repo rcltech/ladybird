@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import GoogleLogin from "react-google-login";
 import { Container, makeStyles } from "@material-ui/core";
 import qs from "query-string";
+import Cookies from "universal-cookie";
 import { Header } from "./Header";
 import Typography from "@material-ui/core/Typography";
 import { withAuthConfigApollo } from "./withAuthConfigApollo";
 import { useMutation } from "@apollo/react-hooks";
 import { LOGIN } from "../gql/login";
-import Cookies from "universal-cookie";
+import { CookiesPopup } from "./CookiesPopup";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -25,6 +26,10 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const classes = useStyles();
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [login] = useMutation(LOGIN);
+
+  const cookies = new Cookies();
+  const cookieValue = cookies.get("RCTC_USER");
+  const cookiesExist = !cookieValue && cookieValue !== "";
 
   if (sessionStorage.getItem("redirectTo") === null) {
     sessionStorage.setItem(
@@ -56,7 +61,6 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
 
         // If the login was successful
         if (login_status) {
-          const cookies = new Cookies();
           const cookieDomain =
             process.env.NODE_ENV === "development"
               ? "localhost"
@@ -142,6 +146,8 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
           </Typography>
         )}
       </div>
+
+      <CookiesPopup isOpen={cookiesExist} />
     </Container>
   );
 };
