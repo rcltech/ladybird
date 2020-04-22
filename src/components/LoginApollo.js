@@ -107,11 +107,11 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
     <Container className={classes.container}>
       <Header />
       <div>
-        <Typography variant="h4">Login</Typography>
+        <Typography variant="h2">Login</Typography>
       </div>
       <div className={classes.text}>
-        <Typography variant="h4">Welcome RC Lee Hall mate!</Typography>
-        <Typography variant="h6">
+        <Typography variant="h3">Welcome RC Lee Hall mate!</Typography>
+        <Typography variant="h5">
           To continue using our app, please sign in using your HKU account.
         </Typography>
       </div>
