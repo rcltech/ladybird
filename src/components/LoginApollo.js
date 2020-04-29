@@ -2,19 +2,23 @@ import React, { useState } from "react";
 import GoogleLogin from "react-google-login";
 import { Container, makeStyles } from "@material-ui/core";
 import qs from "query-string";
+import Cookies from "universal-cookie";
 import { Header } from "./Header";
 import Typography from "@material-ui/core/Typography";
 import { withAuthConfigApollo } from "./withAuthConfigApollo";
 import { useMutation } from "@apollo/react-hooks";
 import { LOGIN } from "../gql/login";
-import Cookies from "universal-cookie";
+import { CookiesPopup } from "./CookiesPopup";
 
 const useStyles = makeStyles(theme => ({
   container: {
     margin: "3vh auto",
   },
   text: {
-    marginBottom: "2vh",
+    margin: "4vh",
+  },
+  redirect: {
+    margin: "40px auto",
   },
 }));
 
@@ -22,6 +26,10 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const classes = useStyles();
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [login] = useMutation(LOGIN);
+
+  const cookies = new Cookies();
+  const cookieValue = cookies.get("RCTC_USER");
+  const cookiesExist = !cookieValue && cookieValue !== "";
 
   if (sessionStorage.getItem("redirectTo") === null) {
     sessionStorage.setItem(
@@ -53,7 +61,6 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
 
         // If the login was successful
         if (login_status) {
-          const cookies = new Cookies();
           const cookieDomain =
             process.env.NODE_ENV === "development"
               ? "localhost"
@@ -99,8 +106,11 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   return (
     <Container className={classes.container}>
       <Header />
+      <div>
+        <Typography variant="h2">Login</Typography>
+      </div>
       <div className={classes.text}>
-        <Typography variant="h2">Welcome RC Lee Hall mate!</Typography>
+        <Typography variant="h3">Welcome RC Lee Hall mate!</Typography>
         <Typography variant="h5">
           To continue using our app, please sign in using your HKU account.
         </Typography>
@@ -114,18 +124,30 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
         disabled={buttonDisabled}
         cookiePolicy={"single_host_origin"}
       />
-      <Typography variant="h6" style={{ margin: "40px 0" }}>
-        If you keep coming back here after login, please{" "}
-        <a
-          href={
-            process.env.NODE_ENV === "development"
-              ? `http://${sessionStorage.getItem("redirectTo")}`
-              : `https://${sessionStorage.getItem("redirectTo")}`
-          }
-        >
-          click here
-        </a>
-      </Typography>
+
+      <div className={classes.redirect}>
+        {sessionStorage.getItem("redirectTo") !== "" ? (
+          <Typography variant="body1">
+            If you keep coming back here after login, please{" "}
+            <a
+              href={
+                process.env.NODE_ENV === "development"
+                  ? `http://${sessionStorage.getItem("redirectTo")}`
+                  : `https://${sessionStorage.getItem("redirectTo")}`
+              }
+            >
+              click here
+            </a>
+          </Typography>
+        ) : (
+          <Typography variant="body1">
+            Please re-visit the application that redirected you here. We
+            apologize for losing that information.
+          </Typography>
+        )}
+      </div>
+
+      <CookiesPopup isOpen={cookiesExist} />
     </Container>
   );
 };
