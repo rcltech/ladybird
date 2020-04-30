@@ -7,4 +7,4 @@ RUN npm install
 COPY . .
 # The PORT 3001 will be exposed for the application
 EXPOSE 3001
-CMD yarn start
+CMD ["yarn", "start"]
