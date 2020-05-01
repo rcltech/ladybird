@@ -26,6 +26,7 @@ jobs:
       install:
         - npm install
       script:
+        - cp .env.development .env.production.local
         - npm run build
         - docker login --username $DOCKER_USER -p $DOCKER_PASS
         - docker build -t rctechclub/ladybird:latest .
