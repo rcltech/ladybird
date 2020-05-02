@@ -26,11 +26,19 @@ jobs:
       install:
         - npm install
       script:
-        - cp .env.development .env.production.local
-        - npm run build
+        - npm run build:prod
         - docker login --username $DOCKER_USER -p $DOCKER_PASS
-        - docker build -t rctechclub/ladybird:latest .
-        - docker push rctechclub/ladybird:latest
+        - docker build -t rctechclub/ladybird:prod .
+        - docker push rctechclub/ladybird:prod
       branches:
         only:
           - master
+
+    - stage: docker
+      install:
+        - npm install
+      script:
+        - npm run build:dev
+        - docker login --username $DOCKER_USER -p $DOCKER_PASS
+        - docker build -t rctechclub/ladybird:latest .
+        - docker push rctechclub/ladybird:latest
