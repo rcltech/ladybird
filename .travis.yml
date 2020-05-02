@@ -13,7 +13,7 @@ jobs:
       install:
         - npm install
       script:
-        - npm run build
+        - npm run build:prod
       deploy:
         provider: pages
         skip_cleanup: true
