@@ -22,7 +22,8 @@ jobs:
         local_dir: ./build
         on:
           branch: master
-    - stage: docker
+    - if: branch = master
+      stage: docker
       install:
         - npm install
       script:
@@ -30,9 +31,6 @@ jobs:
         - docker login --username $DOCKER_USER -p $DOCKER_PASS
         - docker build -t rctechclub/ladybird:prod .
         - docker push rctechclub/ladybird:prod
-      branches:
-        only:
-          - master
 
     - stage: docker
       install:
