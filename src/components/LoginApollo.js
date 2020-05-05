@@ -30,8 +30,12 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const cookies = new Cookies();
   const cookieValue = cookies.get("RCTC_USER");
   const cookiesExist = !cookieValue && cookieValue !== "";
+  console.log(process.env.REACT_APP_ENV);
 
-  if (sessionStorage.getItem("redirectTo") === null) {
+  if (
+    sessionStorage.getItem("redirectTo") === "" ||
+    sessionStorage.getItem("redirectTo") === null
+  ) {
     sessionStorage.setItem(
       "redirectTo",
       qs.parse(location.search).redirectTo || ""
@@ -62,14 +66,14 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
         // If the login was successful
         if (login_status) {
           const cookieDomain =
-            process.env.NODE_ENV === "development"
+            process.env.REACT_APP_ENV === "development"
               ? "localhost"
               : ".rctech.club";
 
           cookies.set("RCTC_USER", token, { path: "/", domain: cookieDomain });
           if (sessionStorage.getItem("redirectTo").length > 0) {
             window.location.replace(
-              process.env.NODE_ENV === "development"
+              process.env.REACT_APP_ENV === "development"
                 ? `http://${sessionStorage.getItem("redirectTo")}?id=${token}`
                 : `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
             );
@@ -131,7 +135,7 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
             If you keep coming back here after login, please{" "}
             <a
               href={
-                process.env.NODE_ENV === "development"
+                process.env.REACT_APP_ENV === "development"
                   ? `http://${sessionStorage.getItem("redirectTo")}`
                   : `https://${sessionStorage.getItem("redirectTo")}`
               }

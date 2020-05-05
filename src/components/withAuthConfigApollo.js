@@ -7,7 +7,7 @@ export const withAuthConfigApollo = ChildComponent => {
     "798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com";
 
   const HOST_URL =
-    process.env.NODE_ENV === "development"
+    process.env.REACT_APP_ENV === "development"
       ? "http://localhost:4000/graphql"
       : "https://phoenix.rctech.club/graphql";
 

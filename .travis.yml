@@ -13,7 +13,7 @@ jobs:
       install:
         - npm install
       script:
-        - npm run build
+        - npm run build:prod
       deploy:
         provider: pages
         skip_cleanup: true
@@ -22,14 +22,21 @@ jobs:
         local_dir: ./build
         on:
           branch: master
+    - if: branch = master
+      stage: docker
+      install:
+        - npm install
+      script:
+        - npm run build:prod
+        - docker login --username $DOCKER_USER -p $DOCKER_PASS
+        - docker build -t rctechclub/ladybird:prod .
+        - docker push rctechclub/ladybird:prod
+
     - stage: docker
       install:
         - npm install
       script:
-        - npm run build
+        - npm run build:dev
         - docker login --username $DOCKER_USER -p $DOCKER_PASS
         - docker build -t rctechclub/ladybird:latest .
         - docker push rctechclub/ladybird:latest
-      branches:
-        only:
-          - master
