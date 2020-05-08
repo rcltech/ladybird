@@ -115,9 +115,11 @@ const Login = ({
         onSuccess={handleLogin}
         onRequest={handleClicked}
         onFailure={handleFailure}
+        isSignedIn={handleLogin}
         clientId={clientID}
         disabled={buttonDisabled}
         cookiePolicy={"single_host_origin"}
+        uxMode={"redirect"}
       />
 
       <div className={classes.redirect}>
