@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import GoogleLogin from "react-google-login";
 import { Container, makeStyles } from "@material-ui/core";
-import qs from "query-string";
 import Cookies from "universal-cookie";
 import { Header } from "./Header";
 import Typography from "@material-ui/core/Typography";
@@ -22,7 +21,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
+const Login = ({
+  googleUser,
+  setGoogleUser,
+  clientID,
+  location,
+  history,
+  redirectUrl,
+}) => {
   const classes = useStyles();
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [login] = useMutation(LOGIN);
@@ -30,17 +36,6 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
   const cookies = new Cookies();
   const cookieValue = cookies.get("RCTC_USER");
   const cookiesExist = !cookieValue && cookieValue !== "";
-  console.log(process.env.REACT_APP_ENV);
-
-  if (
-    sessionStorage.getItem("redirectTo") === "" ||
-    sessionStorage.getItem("redirectTo") === null
-  ) {
-    sessionStorage.setItem(
-      "redirectTo",
-      qs.parse(location.search).redirectTo || ""
-    );
-  }
 
   const readFromLocalStorage = () => {
     const auth2 = window.gapi.auth2.getAuthInstance();
@@ -71,12 +66,8 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
               : ".rctech.club";
 
           cookies.set("RCTC_USER", token, { path: "/", domain: cookieDomain });
-          if (sessionStorage.getItem("redirectTo").length > 0) {
-            window.location.replace(
-              process.env.REACT_APP_ENV === "development"
-                ? `http://${sessionStorage.getItem("redirectTo")}?id=${token}`
-                : `https://${sessionStorage.getItem("redirectTo")}?id=${token}`
-            );
+          if (redirectUrl.length > 0) {
+            window.location.replace(`${redirectUrl}?id=${token}`);
           }
         }
 
@@ -130,18 +121,10 @@ const Login = ({ googleUser, setGoogleUser, clientID, location, history }) => {
       />
 
       <div className={classes.redirect}>
-        {sessionStorage.getItem("redirectTo") !== "" ? (
+        {redirectUrl !== "" ? (
           <Typography variant="body1">
             If you keep coming back here after login, please{" "}
-            <a
-              href={
-                process.env.REACT_APP_ENV === "development"
-                  ? `http://${sessionStorage.getItem("redirectTo")}`
-                  : `https://${sessionStorage.getItem("redirectTo")}`
-              }
-            >
-              click here
-            </a>
+            <a href={redirectUrl}>click here</a>
           </Typography>
         ) : (
           <Typography variant="body1">
