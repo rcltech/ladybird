@@ -35,8 +35,7 @@ const Login = ({
 
   const cookies = new Cookies();
   const cookieValue = cookies.get("RCTC_USER");
-  const cookiesExist = !cookieValue && cookieValue !== "";
-
+  const cookiesExist = cookieValue !== undefined;
   const readFromLocalStorage = () => {
     const auth2 = window.gapi.auth2.getAuthInstance();
     const profile = auth2.currentUser.get().getBasicProfile();
@@ -136,7 +135,7 @@ const Login = ({
         )}
       </div>
 
-      <CookiesPopup isOpen={cookiesExist} />
+      <CookiesPopup isOpen={!cookiesExist} />
     </Container>
   );
 };
