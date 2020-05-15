@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -16,6 +16,8 @@ import { Redirect } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
 import { REGISTER } from "../gql/register";
 import { withAuthConfigApollo } from "./withAuthConfigApollo";
+import { GoogleUserContext } from "../config/GoogleUserContext";
+import { useToast } from "@chakra-ui/core";
 
 const useStyles = makeStyles({
   container: {
@@ -30,26 +32,29 @@ const useStyles = makeStyles({
   },
 });
 
-const Register = ({ setGoogleUser, location, history }) => {
+const Register = ({ location, history }) => {
   const classes = useStyles();
+  const toast = useToast();
   const [privacyAgreement, setPrivacyAgreement] = useState(false);
   const [form, setForm] = useState({});
   const [register, { error: registerError }] = useMutation(REGISTER);
+  const { googleUser, user_details, setCurrentGoogleUser } = useContext(
+    GoogleUserContext
+  );
 
   useEffect(() => {
-    if (location.state && location.state.googleUserLogin) {
-      setGoogleUser(location.state.googleUserLogin);
-    }
+    if (googleUser) setCurrentGoogleUser(googleUser);
+    else history.replace({ location: "/" });
+
     if (registerError) {
       alert(
         "There was an error completing registration. Please register again."
       );
       history.replace({ location: "/" });
     }
-  }, [registerError, location, history, setGoogleUser]);
+  }, [googleUser, history, registerError, setCurrentGoogleUser]);
 
   const validateForm = form => {
-    // validate form fields
     const isEmpty = value => !value || value === "";
     const fields = [
       {
@@ -66,6 +71,7 @@ const Register = ({ setGoogleUser, location, history }) => {
         method: value => RegExp("^[1-9][0-9]{2,3}([A,B])?$").test(value),
       },
     ];
+
     for (const field of fields) {
       const value = form[field.id];
       if (isEmpty(value) || !field.method(value))
@@ -75,7 +81,7 @@ const Register = ({ setGoogleUser, location, history }) => {
             field.id} of ${value} is not accepted.`,
         };
     }
-    // validate privacy agreement
+
     if (!privacyAgreement)
       return {
         validation: false,
@@ -97,26 +103,45 @@ const Register = ({ setGoogleUser, location, history }) => {
         const regData = response.data;
         if (regData && regData.register && regData.register.username) {
           // register is successful, now go back to login
-          alert("Registration complete! Login again to continue");
+          toast({
+            title: "Account created.",
+            description:
+              "We've created your account for you. Please login again.",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
           history.replace({ location: "/" });
         } else {
-          alert("There was an error with registration. Please try again.");
+          toast({
+            title: "Error in registration",
+            description:
+              "Please try to register again. Contact us at contact@rctech.club if this keeps happening",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
           history.replace({ location: "/" });
         }
       } catch (e) {
-        alert("There was an error with registration. Please try again");
+        toast({
+          title: "Error in registration",
+          description:
+            "Please try to register again. Contact us at contact@rctech.club if this keeps happening",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
         history.replace({ location: "/" });
       }
     } else alert(message);
   };
 
   if (location.state === undefined) return <Redirect to="/" />;
-  const user = location.state.user;
 
   return (
     <Container className={classes.container}>
-      <Typography variant="h3">{`Hello, ${user.first_name}`}</Typography>
-
+      <Typography variant="h3">{`Hello, ${user_details.first_name}`}</Typography>
       <FormGroup className={classes.form}>
         <FormControl required>
           <InputLabel htmlFor="username">Username</InputLabel>
@@ -156,7 +181,7 @@ const Register = ({ setGoogleUser, location, history }) => {
             For example: 924A
           </FormHelperText>
         </FormControl>
-        <div className={classes.disclaimer}>
+        <Container className={classes.disclaimer}>
           <Typography variant={"h5"}>Privacy Agreement</Typography>
           <Typography variant={"body1"}>
             To continue using our services, we require you to sign in with
@@ -178,7 +203,7 @@ const Register = ({ setGoogleUser, location, history }) => {
             }
             label="I agree to the privacy agreement."
           />
-        </div>
+        </Container>
         <Button type="submit" onClick={handleSubmit}>
           Submit
         </Button>
