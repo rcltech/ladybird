@@ -47,12 +47,17 @@ const Register = ({ location, history }) => {
     else history.replace({ location: "/" });
 
     if (registerError) {
-      alert(
-        "There was an error completing registration. Please register again."
-      );
+      toast({
+        title: "Error in registration",
+        description:
+          "Please try to register again. Contact us at contact@rctech.club if this keeps happening",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
       history.replace({ location: "/" });
     }
-  }, [googleUser, history, registerError, setCurrentGoogleUser]);
+  }, [googleUser, history, registerError, setCurrentGoogleUser, toast]);
 
   const validateForm = form => {
     const isEmpty = value => !value || value === "";

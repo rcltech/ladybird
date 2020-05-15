@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import GoogleLogin from "react-google-login";
-import { Container, makeStyles } from "@material-ui/core";
+import { Container, Link, makeStyles } from "@material-ui/core";
 import Cookies from "universal-cookie";
 import { Header } from "./Header";
 import Typography from "@material-ui/core/Typography";
@@ -156,7 +156,7 @@ const Login = ({ location, history }) => {
         {redirectUrl && redirectUrl !== "" ? (
           <Typography variant="body1">
             If you keep coming back here after login, please{" "}
-            <a href={redirectUrl}>click here</a>
+            <Link href={redirectUrl}>click here</Link>
           </Typography>
         ) : (
           <Typography variant="body1">
