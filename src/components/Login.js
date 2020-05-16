@@ -29,7 +29,7 @@ const Login = ({ location, history }) => {
   const classes = useStyles();
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const { setCurrentGoogleUser } = useContext(GoogleUserContext);
-  const errorToast = useToast();
+  const toast = useToast();
 
   const clientID =
     "798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com";
@@ -85,6 +85,13 @@ const Login = ({ location, history }) => {
               ? "localhost"
               : ".rctech.club";
           cookies.set("RCTC_USER", token, { path: "/", domain: cookieDomain });
+          toast({
+            title: "You are logged in",
+            description: "",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
           if (redirectUrl && redirectUrl.length > 0) {
             window.location.replace(
               `${
@@ -96,6 +103,13 @@ const Login = ({ location, history }) => {
           }
         }
       } else {
+        toast({
+          title: "You need to register",
+          description: "Please enter some registration information.",
+          status: "info",
+          duration: 9000,
+          isClosable: true,
+        });
         history.push({
           pathname: "register",
           state: {
@@ -105,7 +119,7 @@ const Login = ({ location, history }) => {
         });
       }
     } else {
-      errorToast({
+      toast({
         title: "User login error",
         description:
           "The user login details did not work. Try logging in again.",
@@ -117,7 +131,7 @@ const Login = ({ location, history }) => {
   };
 
   const handleFailure = () => {
-    errorToast({
+    toast({
       title: "Google login did not work!",
       description:
         "Please close the application and re-open it too see if this works.",
