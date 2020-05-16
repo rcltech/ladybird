@@ -38,14 +38,17 @@ const Login = ({ location, history }) => {
   const cookies = new Cookies();
 
   useEffect(() => {
-    if (sessionStorage.getItem("redirectTo") === "")
-      if (qs.parse(location.search).redirectTo !== "") {
+    if (redirectUrl === null || redirectUrl === "")
+      if (
+        qs.parse(location.search).redirectTo &&
+        qs.parse(location.search).redirectTo !== ""
+      ) {
         sessionStorage.setItem(
           "redirectTo",
           qs.parse(location.search).redirectTo
         );
       }
-  }, [location.search]);
+  }, [location.search, redirectUrl]);
 
   const sendLoginRequest = async token => {
     const URL =
