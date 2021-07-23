@@ -17,7 +17,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { REGISTER } from "../gql/register";
 import { withAuthConfigApollo } from "./withAuthConfigApollo";
 import { GoogleUserContext } from "../config/GoogleUserContext";
-import { useToast } from "@chakra-ui/core";
+import { useToast } from "@chakra-ui/react";
 
 const useStyles = makeStyles({
   container: {
