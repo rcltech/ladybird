@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import LoginApollo from "./components/Login";
 import RegisterApollo from "./components/Register";
 import { GoogleUserContext, useGoogleUser } from "./config/GoogleUserContext";
-import { useToast } from "@chakra-ui/core";
+import { useToast } from "@chakra-ui/react";
 
 export const App = () => {
   const toast = useToast();

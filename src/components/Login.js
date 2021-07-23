@@ -6,7 +6,7 @@ import { Header } from "./Header";
 import Typography from "@material-ui/core/Typography";
 import { GoogleUserContext } from "../config/GoogleUserContext";
 import qs from "query-string";
-import { useToast } from "@chakra-ui/core";
+import { useToast } from "@chakra-ui/react";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -75,9 +75,9 @@ const Login = ({ location, history }) => {
     const response = await sendLoginRequest(
       googleUserLogin.getAuthResponse().id_token
     );
+    console.log(response);
     if (response) {
       const { registered, logged_in, token } = response;
-      console.log(response);
       if (registered) {
         if (logged_in) {
           const cookieDomain =
@@ -159,14 +159,15 @@ const Login = ({ location, history }) => {
       </Container>
 
       <GoogleLogin
+        hostedDomain={"connect.hku.hk"}
         onSuccess={handleLogin}
         onRequest={handleClicked}
         onFailure={handleFailure}
-        isSignedIn
         clientId={clientID}
         disabled={buttonDisabled}
         cookiePolicy={"single_host_origin"}
         uxMode={"redirect"}
+        isSignedIn={true}
       />
 
       <Container className={classes.redirect}>

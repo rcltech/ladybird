@@ -5,17 +5,19 @@ import * as serviceWorker from "./serviceWorker";
 import { theme } from "./config/theme";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { CssBaseline } from "@material-ui/core";
-import { ThemeProvider as ChakraThemeProvider } from "@chakra-ui/core";
-import { theme as chakraTheme } from "@chakra-ui/core";
-import CSSReset from "@chakra-ui/core/dist/CSSReset";
+import {
+  ChakraProvider,
+  theme as chakraTheme,
+  CSSReset,
+} from "@chakra-ui/react";
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
-    <ChakraThemeProvider theme={chakraTheme}>
+    <ChakraProvider theme={chakraTheme}>
       <CssBaseline />
       <CSSReset />
       <App />
-    </ChakraThemeProvider>
+    </ChakraProvider>
   </ThemeProvider>,
   document.getElementById("root")
 );
