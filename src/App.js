@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import LoginApollo from "./components/Login";
-import RegisterApollo from "./components/Register";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import { GoogleUserContext, useGoogleUser } from "./config/GoogleUserContext";
 import { useToast } from "@chakra-ui/react";
 
@@ -23,8 +23,8 @@ export const App = () => {
     <GoogleUserContext.Provider value={googleUser}>
       <Router>
         <Switch>
-          <Route path="/" exact component={LoginApollo} />
-          <Route path="/register" exact component={RegisterApollo} />
+          <Route path="/" exact component={Login} />
+          <Route path="/register" exact component={Register} />
         </Switch>
       </Router>
     </GoogleUserContext.Provider>

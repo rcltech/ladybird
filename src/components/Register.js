@@ -1,23 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
+  Checkbox,
   Container,
   FormControl,
+  FormControlLabel,
   FormGroup,
   FormHelperText,
   Input,
   InputLabel,
-  Typography,
-  FormControlLabel,
-  Checkbox,
   makeStyles,
+  Typography,
 } from "@material-ui/core";
-import { Redirect } from "react-router-dom";
-import { useMutation } from "@apollo/react-hooks";
-import { REGISTER } from "../gql/register";
-import { withAuthConfigApollo } from "./withAuthConfigApollo";
-import { GoogleUserContext } from "../config/GoogleUserContext";
+import { useMutation, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
+
+import { withAuthConfigApollo } from "./withAuthConfigApollo";
+import { ME } from "../gql/me";
+import { REGISTER } from "../gql/register";
 
 const useStyles = makeStyles({
   container: {
@@ -35,17 +35,24 @@ const useStyles = makeStyles({
 const Register = ({ location, history }) => {
   const classes = useStyles();
   const toast = useToast();
+
+  const { data, loading, error } = useQuery(ME);
+
   const [privacyAgreement, setPrivacyAgreement] = useState(false);
   const [form, setForm] = useState({});
-  const [register, { error: registerError }] = useMutation(REGISTER);
-  const { googleUser, user_details, setCurrentGoogleUser } = useContext(
-    GoogleUserContext
-  );
+  const [
+    register,
+    { data: registerData, loading: registerLoading, error: registerError },
+  ] = useMutation(REGISTER);
 
   useEffect(() => {
-    if (googleUser) setCurrentGoogleUser(googleUser);
-    else history.replace({ location: "/" });
+    if (error) {
+      console.log(error);
+      history.back();
+    }
+  }, [error, history]);
 
+  useEffect(() => {
     if (registerError) {
       toast({
         title: "Error in registration",
@@ -55,9 +62,22 @@ const Register = ({ location, history }) => {
         duration: 9000,
         isClosable: true,
       });
-      history.replace({ location: "/" });
     }
-  }, [googleUser, history, registerError, setCurrentGoogleUser, toast]);
+  }, [history, registerError, toast]);
+
+  useEffect(() => {
+    if (registerData?.register?.username) {
+      // register is successful, now go back to login page
+      toast({
+        title: "Account registered successfully",
+        description: "Redirecting",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+      history.push({ location: "/" });
+    }
+  }, [registerData, toast, history]);
 
   const validateForm = form => {
     const isEmpty = value => !value || value === "";
@@ -103,50 +123,15 @@ const Register = ({ location, history }) => {
   const handleSubmit = async () => {
     const { validation, message } = validateForm(form);
     if (validation) {
-      try {
-        const response = await register({ variables: form });
-        const regData = response.data;
-        if (regData && regData.register && regData.register.username) {
-          // register is successful, now go back to login
-          toast({
-            title: "Account created.",
-            description:
-              "We've created your account for you. Please login again.",
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-          });
-          history.replace({ location: "/" });
-        } else {
-          toast({
-            title: "Error in registration",
-            description:
-              "Please try to register again. Contact us at contact@rctech.club if this keeps happening",
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-          });
-          history.replace({ location: "/" });
-        }
-      } catch (e) {
-        toast({
-          title: "Error in registration",
-          description:
-            "Please try to register again. Contact us at contact@rctech.club if this keeps happening",
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-        history.replace({ location: "/" });
-      }
+      await register({ variables: form });
     } else alert(message);
   };
 
-  if (location.state === undefined) return <Redirect to="/" />;
+  if (loading) return <></>;
 
   return (
     <Container className={classes.container}>
-      <Typography variant="h3">{`Hello, ${user_details.first_name}`}</Typography>
+      <Typography variant="h3">{`Hello, ${data.me.first_name}`}</Typography>
       <FormGroup className={classes.form}>
         <FormControl required>
           <InputLabel htmlFor="username">Username</InputLabel>
@@ -209,7 +194,7 @@ const Register = ({ location, history }) => {
             label="I agree to the privacy agreement."
           />
         </Container>
-        <Button type="submit" onClick={handleSubmit}>
+        <Button type="submit" onClick={handleSubmit} disabled={registerLoading}>
           Submit
         </Button>
       </FormGroup>

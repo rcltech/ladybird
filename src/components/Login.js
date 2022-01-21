@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import GoogleLogin from "react-google-login";
 import { Container, Link, makeStyles } from "@material-ui/core";
-import Cookies from "universal-cookie";
-import { Header } from "./Header";
 import Typography from "@material-ui/core/Typography";
-import { GoogleUserContext } from "../config/GoogleUserContext";
 import qs from "query-string";
 import { useToast } from "@chakra-ui/react";
+
+import { Header } from "./Header";
+import { GoogleUserContext } from "../config/GoogleUserContext";
+import { setTokenInCookie } from "./setTokenInCookie";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,30 +32,49 @@ const Login = ({ location, history }) => {
   const { setCurrentGoogleUser } = useContext(GoogleUserContext);
   const toast = useToast();
 
-  const clientID =
-    "798725565697-sfibjdadpcan9ks908dnl8p5k1dncmoq.apps.googleusercontent.com";
+  const clientID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
-  const redirectUrl = sessionStorage.getItem("redirectTo");
-  const cookies = new Cookies();
+  const [redirectUrl, setRedirectUrl] = useState(
+    sessionStorage.getItem("redirectTo")
+  );
 
   useEffect(() => {
-    if (redirectUrl === null || redirectUrl === "")
-      if (
-        qs.parse(location.search).redirectTo &&
-        qs.parse(location.search).redirectTo !== ""
-      ) {
-        sessionStorage.setItem(
-          "redirectTo",
-          qs.parse(location.search).redirectTo
-        );
+    const parsedRedirectTo = qs.parse(location.search).redirectTo;
+    if (parsedRedirectTo) {
+      sessionStorage.setItem("redirectTo", parsedRedirectTo);
+      setRedirectUrl(parsedRedirectTo);
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    // check login status
+    const check = async () => {
+      try {
+        const url = `${process.env.REACT_APP_PHOENIX_URL}/oauth/user/check`;
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.status === 200) {
+          const { registered } = await response.json();
+
+          if (registered) {
+            window.location.href = redirectUrl;
+          } else {
+            history.push({ location: "/register" });
+          }
+        }
+      } catch (e) {
+        console.log(e);
       }
-  }, [location.search, redirectUrl]);
+    };
+
+    // check().then();
+  }, [history, location.search, redirectUrl]);
 
   const sendLoginRequest = async token => {
-    const URL =
-      process.env.REACT_APP_ENV === "development"
-        ? "http://localhost:4000/oauth/user/login"
-        : "https://phoenix.rctech.club/oauth/user/login";
+    const URL = `${process.env.REACT_APP_PHOENIX_URL}/oauth/user/login`;
     try {
       const response = await fetch(URL, {
         method: "POST",
@@ -63,7 +83,7 @@ const Login = ({ location, history }) => {
           authorization: token,
         },
       });
-      return JSON.parse(await response.text());
+      return await response.json();
     } catch (e) {
       console.error(e);
       return null;
@@ -71,63 +91,52 @@ const Login = ({ location, history }) => {
   };
 
   const handleLogin = async googleUserLogin => {
-    setCurrentGoogleUser(googleUserLogin);
-    const response = await sendLoginRequest(
-      googleUserLogin.getAuthResponse().id_token
-    );
-    console.log(response);
-    if (response) {
-      const { registered, logged_in, token } = response;
-      if (registered) {
-        if (logged_in) {
-          const cookieDomain =
-            process.env.REACT_APP_ENV === "development"
-              ? "localhost"
-              : ".rctech.club";
-          cookies.set("RCTC_USER", token, { path: "/", domain: cookieDomain });
-          toast({
-            title: "You are logged in",
-            description: "",
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-          });
-          if (redirectUrl && redirectUrl.length > 0) {
-            window.location.replace(
-              `${
-                process.env.REACT_APP_ENV === "development"
-                  ? "http://"
-                  : "https://"
-              }${redirectUrl}?id=${token}`
-            );
-          }
-        }
-      } else {
-        toast({
-          title: "You need to register",
-          description: "Please enter some registration information.",
-          status: "info",
-          duration: 9000,
-          isClosable: true,
-        });
-        history.push({
-          pathname: "register",
-          state: {
-            googleUserLogin,
-            token: googleUserLogin.getAuthResponse().id_token,
-          },
-        });
-      }
-    } else {
-      toast({
-        title: "User login error",
-        description:
-          "The user login details did not work. Try logging in again.",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
-    }
+    console.log("on success");
+
+    console.log(googleUserLogin);
+    // setCurrentGoogleUser(googleUserLogin);
+    //
+    // const googleUserLoginToken = googleUserLogin.getAuthResponse().id_token;
+
+    // const response = await sendLoginRequest(googleUserLoginToken);
+    //
+    // console.log(response);
+    //
+    // if (response) {
+    //   const { registered, logged_in, token } = response;
+    //   if (registered) {
+    //     if (logged_in) {
+    //       setTokenInCookie(token);
+    //       toast({
+    //         title: "You are logged in",
+    //         status: "success",
+    //         duration: 9000,
+    //         isClosable: true,
+    //       });
+    //       if (redirectUrl) {
+    //         window.location.href = redirectUrl;
+    //       }
+    //     }
+    //   } else {
+    //     toast({
+    //       title: "You need to register",
+    //       description: "Please enter some registration information.",
+    //       status: "info",
+    //       duration: 9000,
+    //       isClosable: true,
+    //     });
+    //     history.push({ location: "/register" });
+    //   }
+    // } else {
+    //   toast({
+    //     title: "User login error",
+    //     description:
+    //       "The user login details did not work. Try logging in again.",
+    //     status: "error",
+    //     duration: 9000,
+    //     isClosable: true,
+    //   });
+    // }
   };
 
   const handleFailure = () => {
