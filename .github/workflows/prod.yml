@@ -2,8 +2,8 @@ name: Deploy Ladybird
 
 on:
   push:
-#    branches:
-#      - master
+    branches:
+      - master
 
 jobs:
   deploy:
